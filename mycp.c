@@ -42,7 +42,6 @@ int main(int argc, char* argv[]) {
     
     
     dest_file = open(dest_file_name, O_RDWR);
-    printf("%d\n", dest_file);
     if (dest_file != -1) {
       printf("File already exists. Overwrite? [y/N]: ");
       int check = fgetc(stdin);
@@ -58,15 +57,11 @@ int main(int argc, char* argv[]) {
     stat(source_file_name, &statbuf);
     
     dest_file = open(dest_file_name, O_WRONLY | O_CREAT, statbuf.st_mode);
-    printf("N: %d\n", dest_file);
-
 
     int readResult, writeResult;
     do  {
       readResult = read(source_file, buffer, BUFFERSIZE);
-      printf("R: %d\n", readResult);
       writeResult = write(dest_file, buffer, readResult);
-      printf("W: %d\n", writeResult);
     } while (readResult != 0 && writeResult != 0);
 
     close(source_file);
