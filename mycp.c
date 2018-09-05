@@ -40,6 +40,7 @@ int main(int argc, char* argv[]) {
       return 0;
     }
     
+    
     dest_file = open(dest_file_name, O_RDWR);
     printf("%d\n", dest_file);
     if (dest_file != -1) {
@@ -53,7 +54,10 @@ int main(int argc, char* argv[]) {
         remove(dest_file_name);
       }
     }
-  dest_file = open(dest_file_name, O_WRONLY | O_CREAT, 0644);
+    struct stat statbuf;
+    stat(source_file_name, &statbuf);
+    
+    dest_file = open(dest_file_name, O_WRONLY | O_CREAT, statbuf.st_mode);
     printf("N: %d\n", dest_file);
 
 
