@@ -12,7 +12,12 @@
 
 #include "mycp.h"
 
+void printUsage() {
+  printf( "\nUsage:\nmycp source_file destination_file\n");
+}
+
 int main(int argc, char* argv[]) {
+
 
   return 0;
 }
