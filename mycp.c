@@ -14,23 +14,58 @@
 
 #include "mycp.h"
 
+#define BUFFERSIZE 128
+
 // printUsage - print an explanatory error message to help users
 void printUsage() {
-  printf( "\nUsage:\nmycp source_file destination_file\n");
+  printf("Usage:\nmycp source_file destination_file\n");
 }
 
 int main(int argc, char* argv[]) {
+  char buffer[BUFFERSIZE];
   char source_file_name[128];
   char dest_file_name[128];
-  FILE source_file;
-  FILE dest_file;
+  int source_file;
+  int dest_file;
 
   if(argc == 3) {
     //get file names
     strcpy(source_file_name, argv[1]);
     strcpy(dest_file_name, argv[2]);
 
+    source_file = open(source_file_name, O_RDONLY);
+    if (source_file == -1) {
+      printf("Source file does not exist\n");
+      return 0;
+    }
     
+    dest_file = open(dest_file_name, O_RDWR);
+    printf("%d\n", dest_file);
+    if (dest_file != -1) {
+      printf("File already exists. Overwrite? [y/N]: ");
+      int check = fgetc(stdin);
+      if (!(check == (int) 'Y' || check == (int) 'y')) {
+        return 0;
+      }
+      else {
+        close(dest_file);
+        remove(dest_file_name);
+      }
+    }
+  dest_file = open(dest_file_name, O_WRONLY | O_CREAT, 0644);
+    printf("N: %d\n", dest_file);
+
+
+    int readResult, writeResult;
+    do  {
+      readResult = read(source_file, buffer, BUFFERSIZE);
+      printf("R: %d\n", readResult);
+      writeResult = write(dest_file, buffer, readResult);
+      printf("W: %d\n", writeResult);
+    } while (readResult != 0 && writeResult != 0);
+
+    close(source_file);
+    close(dest_file);
   }
   else {
     printUsage();
@@ -39,3 +74,4 @@ int main(int argc, char* argv[]) {
 
   return 0;
 }
+
