@@ -5,17 +5,7 @@
   Programming Assignment 1b
 */
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-
 #include "mycp.h"
-
-#define BUFFERSIZE 128
 
 // printUsage - print an explanatory error message to help users
 void printUsage() {
@@ -40,8 +30,7 @@ int main(int argc, char* argv[]) {
       return 0;
     }
     
-    
-    dest_file = open(dest_file_name, O_RDWR);
+    dest_file = access(dest_file_name, W_OK);
     if (dest_file != -1) {
       printf("File already exists. Overwrite? [y/N]: ");
       int check = fgetc(stdin);
@@ -49,14 +38,18 @@ int main(int argc, char* argv[]) {
         return 0;
       }
       else {
-        close(dest_file);
         remove(dest_file_name);
       }
     }
+
     struct stat statbuf;
     stat(source_file_name, &statbuf);
     
     dest_file = open(dest_file_name, O_WRONLY | O_CREAT, statbuf.st_mode);
+
+    if (dest_file == -1) {
+      printf("Failed to open destination file\n");
+    }
 
     int readResult, writeResult;
     do  {
